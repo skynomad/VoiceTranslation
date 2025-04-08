@@ -1,0 +1,14 @@
+__pycache__/languages.cpython-312.pyc
+__pycache__/logger.cpython-312.pyc
+__pycache__/speech_to_text.cpython-312.pyc
+__pycache__/text_to_speech.cpython-312.pyc
+__pycache__/translation_languages.cpython-312.pyc
+__pycache__/translator.cpython-312.pyc
+node_modules/.package-lock.json
+node_modules/audio/index.js
+node_modules/audio/LICENSE
+node_modules/audio/package.json
+node_modules/object-assign/index.js
+node_modules/object-assign/license
+node_modules/object-assign/package.json
+node_modules/object-assign/readme.md
