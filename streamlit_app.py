@@ -82,6 +82,9 @@ def main():
         ## TRANSLATE
         trans_column.title("Translation")
 
+        if voice_column.voice_text != st.session_state["msg"]:
+            st.session_state["msg"] = voice_column.voice_text
+            
         # textarea를 체크해서 lang체크 가능할까?
         if st.session_state["msg"] != "":
             with st.spinner("음성파일 언어 확인 중..."):
