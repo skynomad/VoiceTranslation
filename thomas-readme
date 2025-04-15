@@ -1,0 +1,5 @@
+streamlit run --logger.level=info --server.enableCORS=false --server.sslKeyFile key.pem --server.sslCertFile cert.pem Home.py
+
+--server.address
+
+--server.port

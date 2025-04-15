@@ -1,5 +1,23 @@
 supported_languages = {
     "Select Language": None,
+    "German": "de",
+    "Greek": "el",
+    "English": "en",
+    "Spanish": "es",
+    "French": "fr",
+    "Indonesian": "id",
+    "Italian": "it",
+    "Japanese": "ja",
+    "Korean": "ko",
+    "Russian": "ru",
+    "Thai": "th",
+    "Ukrainian": "uk",
+    "Chinese": "zh-CN"
+}
+
+"""
+supported_languages = {
+    "Select Language": None,
     "Afrikaans": "af",
     "Arabic": "ar",
     "Bulgarian": "bg",
@@ -58,3 +76,4 @@ supported_languages = {
     "Vietnamese": "vi",
     "Chinese": "zh-CN",
 }
+"""
