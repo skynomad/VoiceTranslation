@@ -3,11 +3,11 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 import env_config as env
-from env_config import init_logger, init_config, llm_selector, translation_selector, llm_server_selector
+from env_config import init_logger, init_config, llm_selector, translation_language_selector, llm_server_selector
 from appai_client import AIClient
 from audio_recorder_streamlit import audio_recorder
 
-from transcribe_speech_text import speech_to_text
+from transcribe_speech_text import audio_to_text
 from transcript_text_speech import text_to_speech, autoplay_audio, detect_source_language, translate_language
 from langchain_llm_chatbot import get_llm_response
 from translation_languages import supported_languages
@@ -20,15 +20,17 @@ st.subheader("🎙️ Automatic Speech Recognition")
 if 'logger' not in st.session_state:
     st.session_state.logger = init_logger()
     
+if 'translate_option' not in st.session_state:
+    st.session_state.translate_option = False    
 #######################################################################
 #
 with st.sidebar:
     st.title("🎙️ Audio To Text")  
         
     # Translation Option
-    translate_option = st.checkbox("Enable Translation")
+    translate_option = st.checkbox("Enable Translation", disabled=True)
     if translate_option:
-        target_language = translation_selector()
+        target_language = translation_language_selector()
         st.session_state.logger.info(f"Select Lanauge : {target_language}")
 
     st.session_state.llm_model = llm_selector(disabled=True)
@@ -83,7 +85,8 @@ if st.button(
 ):
     with st.spinner("Analyzing Audio..."):
         # Transcribe Audio To Text 
-        transcript = speech_to_text(client, audio_file)
+        transcript = audio_to_text(client=client, 
+                                    audio_data=audio_file)
         st.session_state.transcript = transcript
         
 audio_text = st.text_area(

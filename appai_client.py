@@ -42,8 +42,8 @@ class AIClient:
             st.session_state.logger.error(f"Get Mode List Error: {error.strerror}")  
         finally:
             return response
-    
-    def generate_response(self, prompt, max_tokens=100):
+
+    def generate_prompt_response(self, prompt: str, max_tokens: int=100) -> str:
         """
         주어진 프롬프트를 기반으로 OpenAI API에서 응답 생성.
 
@@ -57,6 +57,49 @@ class AIClient:
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens
             )
-            return response["choices"][0]["message"]["content"]
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            return f"Error: {str(e)}"
+            
+    def generate_response(self, input_text: str, max_tokens: int=100) -> str:
+        try:
+            response = self.ai_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an AI chatbot having a conversation with a human."},
+                    {
+                        "role": "user",
+                        "content": f"Answer the meaning doesn't change with question : '{input_text}'",
+                    },
+                ],
+                max_tokens=max_tokens,
+                temperature=0,
+            )
+            
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            return f"Error: {str(e)}"
+        
+    def generate_translate_response(self, source_language: str, target_language: str, input_text: str, max_tokens: int=100) -> str:
+        """
+        주어진 프롬프트를 기반으로 OpenAI API에서 응답 생성.
+
+        :param input_text: 사용자가 입력한 프롬프트
+        :param max_tokens: 생성할 최대 토큰 수 (기본값: 100)
+        :return: 생성된 텍스트 응답
+        """
+        try:
+            response = self.ai_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an AI chatbot having a conversation with human also your are multi-language translator."},
+                    {
+                        "role": "user",
+                        "content": f"Translate following {source_language} text to {target_language} with the meaning doesn't change : '{input_text}'",
+                    },
+                ],
+                max_tokens=max_tokens
+            )
+            return response.choices[0].message.content.strip()
         except Exception as e:
             return f"Error: {str(e)}"

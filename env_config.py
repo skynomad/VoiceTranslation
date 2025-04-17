@@ -32,6 +32,11 @@ CHATBOT_PROMPT = [
     ("human", "{question}"),
 ]
 
+CHATBOT_TRANSLATION_PROMPT = [
+    ("system", "You are an AI chatbot having a conversation with human also your are multi-language translator."), 
+    MessagesPlaceholder(variable_name="history"),
+    ("human", "Translate following {source_language} text to {target_language} so that the meaning doesn't change with question : '{question}'"),
+]
 
 def get_chatbot_promt() -> str:
     return CHATBOT_PROMPT
@@ -65,7 +70,7 @@ def init_logger() -> logging:
 def llm_selector_onchange():
     print("llm_selector_onchange")
     
-def llm_selector(disabled: bool = False):
+def llm_selector(disabled: bool = False) -> str:
     #llm_models = ["llama3.2", "gpt-4o", "meta-llama-3.1-8b-instruct"] 
     llm_models = ["gpt-4o", "meta-llama-3.1-8b-instruct"] 
     with st.sidebar:
@@ -82,22 +87,44 @@ def llm_selector(disabled: bool = False):
         
         return llm_model
 
-def translation_selector():
-    with st.sidebar:
-        return st.selectbox("Select Translation Language",
-                            sorted(list(supported_languages.keys())[1:]),
-                            index=8,
-                            label_visibility="visible")
+def translation_language_selector(label: str = "Select Translation Language",
+                                  key: str = "translation_language_selector",
+                                  index: int = 8) -> str:
+    #with st.sidebar:
+    if 'translate_language_option' not in st.session_state:
+        st.session_state.translate_language_option = 0
+        
+    translate_language = st.selectbox(label=label,
+                                      key=key,
+                                      options=sorted(list(supported_languages.keys())[1:]),
+                                      index=index,
+                                      label_visibility="visible")
+    st.session_state.translate_language_option = translate_language.index(translate_language)
+    st.session_state.logger.info(f"Select Translation Language : {translate_language}")
+    print(translate_language)
+    return translate_language
 
-def llm_server_selector():
+def translate_option(disabled: bool = False) -> bool:
+    with st.sidebar:
+        if 'translate_option' not in st.session_state:
+            st.session_state.translate_option = False
+        
+        translate_option = st.checkbox("Enable Translation", 
+                                       value=st.session_state.translate_option, 
+                                       disabled=disabled)
+        st.session_state.translate_option = translate_option
+        st.session_state.logger.info(f"Translation Option : {translate_option}")
+
+        return translate_option
+        
+def llm_server_selector() -> str:
     llm_servers=["LocalAI", "Ollama","OpenAI"]
     with st.sidebar:
-        with st.sidebar:
-            if 'llm_server_option' not in st.session_state:
-                st.session_state.llm_server_option = 0
+        if 'llm_server_option' not in st.session_state:
+            st.session_state.llm_server_option = 0
                 
         llm_server = st.selectbox("LLM Server", llm_servers, index=st.session_state.llm_server_option)
-        st.session_state.logger.info(f"Selected LLM Server : {llm_server}")
         st.session_state.llm_model_option = llm_servers.index(llm_server)
-        
+        st.session_state.logger.info(f"Selected LLM Server : {llm_server}")
+
         return llm_server
