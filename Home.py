@@ -75,7 +75,7 @@ if translate_option:
     source_language = translation_language_selector(label="Select Source Language", key="Source Language", index=1)
     target_lanaguge = translation_language_selector(label="Select Target Language", key="Target Language", index=8)
 
-if st.button('Question'):
+if st.button('Get Response'):
     if translate_option:
         response = ai_client.generate_translate_response(source_language=source_language, target_language=target_lanaguge, input_text=input_text)
     else:

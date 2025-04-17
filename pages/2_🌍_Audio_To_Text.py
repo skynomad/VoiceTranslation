@@ -28,7 +28,7 @@ with st.sidebar:
     st.title("🎙️ Audio To Text")  
         
     # Translation Option
-    translate_option = st.checkbox("Enable Translation", disabled=True)
+    translate_option = st.checkbox("Enable Translation", value=True, disabled=True)
     if translate_option:
         target_language = translation_language_selector()
         st.session_state.logger.info(f"Select Lanauge : {target_language}")
