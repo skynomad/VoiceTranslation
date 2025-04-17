@@ -27,14 +27,17 @@ def speech_to_text(client: OpenAI, audio_path: str, model_name="whisper-1") -> s
     
     return transcript_text
 
-def speech_to_text(client: OpenAI, audio_file: bytes, model_name="whisper-1") -> str:
+def speech_to_text(client: OpenAI, audio_data: str, model_name="whisper-1") -> str:
     try:
-        transcript_text = ""    
-        transcript = client.audio.transcriptions.create(
-            model=model_name,
-            response_format="text",
-            file=audio_file
-        )
+        transcript_text = ""
+        print("111111")
+        with open(audio_data, "rb") as audio_file:
+            transcript = client.audio.transcriptions.create(
+                model=model_name,
+                response_format="text",
+                file=audio_file
+            )
+        print("33333")
         
         transcript_text = transcript.text
         st.session_state.logger.info(f"Speech_to_text transcript : {transcript}") 

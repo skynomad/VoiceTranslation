@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from logging import getLogger
 
 import env_config as env
-from env_config import init_logger, init_config
+from env_config import init_logger, init_config, llm_selector
 from appai_client import AIClient
     
 st.set_page_config(page_title="Home", page_icon="🏠", layout="wide")
@@ -43,17 +43,7 @@ with st.sidebar:
 #         """
 #     )
 
-def llm_selector():
-    llm_models = ["gpt-4o", "meta-llama-3.1-8b-instruct"] 
-    with st.sidebar:
-        if 'llm_model_option' not in st.session_state:
-            st.session_state.llm_model_option = 0
-            
-        llm_model = st.selectbox("Model", llm_models, index=st.session_state.llm_model_option)
-        st.session_state.logger.info(f"Selected LLM Model : {llm_model}")
-        st.session_state.llm_model_option = llm_models.index(llm_model)
-        
-        return llm_model
+
     
 # Get an OpenAI/LocalAI/Ollama Client
 # AI Client 

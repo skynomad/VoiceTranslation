@@ -13,3 +13,8 @@ node_modules/object-assign/license
 node_modules/object-assign/package.json
 node_modules/object-assign/readme.md
 .env
+__pycache__/appai_client.cpython-312.pyc
+__pycache__/env_config.cpython-312.pyc
+__pycache__/langchain_llm_chatbot.cpython-312.pyc
+__pycache__/transcribe_speech_text.cpython-312.pyc
+__pycache__/transcript_text_speech.cpython-312.pyc

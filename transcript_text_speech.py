@@ -78,7 +78,7 @@ def translate_language(client: OpenAI, input_text: str, source_language: str, ta
         )
         translate_text = response.choices[0].message.content.strip().replace("'", "").replace('"', "")
         st.session_state.logger.info(f"translate_language response : {translate_text}")
-        
+        print(translate_text)
     except Exception as error:
         st.session_state.logger.error(f"translate_language Error : {error}")
         pass

@@ -2,7 +2,7 @@ import os
 import streamlit as st
 
 import env_config as env
-from env_config import init_logger, init_config
+from env_config import init_logger, init_config, llm_selector, translation_selector
 from appai_client import AIClient
 from audio_recorder_streamlit import audio_recorder
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
@@ -24,37 +24,6 @@ if 'logger' not in st.session_state:
 
 #######################################################################
 #
-def translation_selector():
-    with st.sidebar:
-        return st.selectbox("Select Translation Language",
-                            sorted(list(supported_languages.keys())[1:]),
-                            index=8,
-                            label_visibility="visible")
-def llm_selector():
-    llm_models = ["gpt-4o", "meta-llama-3.1-8b-instruct"] 
-    with st.sidebar:
-        if 'llm_model_option' not in st.session_state:
-            st.session_state.llm_model_option = 0
-        
-        llm_model = st.selectbox("Model", llm_models, index=st.session_state.llm_model_option)
-        st.session_state.logger.info(f"Selected LLM Model : {llm_model}")
-        st.session_state.llm_model_option = llm_models.index(llm_model)
-        
-        return llm_model
-
-def llm_server_selector():
-    llm_servers=["LocalAI", "Ollama","OpenAI"]
-    with st.sidebar:
-        with st.sidebar:
-            if 'llm_server_option' not in st.session_state:
-                st.session_state.llm_server_option = 0
-                
-        llm_server = st.selectbox("LLM Server", llm_servers, index=st.session_state.llm_server_option)
-        st.session_state.logger.info(f"Selected LLM Server : {llm_server}")
-        st.session_state.llm_model_option = llm_servers.index(llm_server)
-        
-        return llm_server
-
 with st.sidebar:
     st.title("🎙️ Voice & Chat Bot")
     
@@ -67,6 +36,8 @@ with st.sidebar:
         target_language = translation_selector()
         st.session_state.logger.info(f"Select Lanauge : {target_language}")
 
+    st.session_state.llm_model = llm_selector(disabled=True)
+    
     # Generate Audio Option
     genaudio_option = st.checkbox("Enable Generate Audio")
                 
@@ -87,7 +58,7 @@ if 'ai_client' not in st.session_state:
     # Get an OpenAI/LocalAI/Ollama Client
     ai_client = AIClient(api_key=env.api_key, 
                          base_url=env.base_url,
-                         model=llm_selector())
+                         model=st.session_state.llm_model)
 else:
     ai_client = st.session_state.ai_client
 
@@ -136,7 +107,8 @@ if audio_bytes is not None:
                 f.write(audio_bytes)
 
             # STT
-            transcript = speech_to_text(client, file_path)
+            transcript = speech_to_text(client=client, 
+                                        audio_data=file_path)
             if transcript:
                 st.chat_message("human").write(transcript)
                 msgs.add_user_message(transcript)
@@ -168,13 +140,19 @@ if st.session_state.langchain_messages[-1].type != "ai":
                 # Translation == TRUE 
                 if translate_option:
                     with st.spinner("Detecting language..."):
-                        source_language = detect_source_language(client, response_text, )
+                        source_language = detect_source_language(client=client, 
+                                                                 input_text=response_text, 
+                                                                 model_name=st.session_state.llm_model)
                         st.write(f"**Detected voice language**: {source_language} :thumbsup:")
                     
                     with st.spinner("Translating..."):    
-                        response_text= translate_language(client, response_text, source_language, target_language)
+                        response_text= translate_language(client=client, 
+                                                          input_text=response_text, 
+                                                          source_language=source_language, 
+                                                          target_language=target_language, 
+                                                          model_name=st.session_state.llm_model)
             except Exception as error:
-                st.session_state.logger.error(f"Translate Response ailed : {error}")
+                st.session_state.logger.error(f"Translate Response Failed : {error}")
                 pass
                         
             st.write(response_text)
