@@ -49,7 +49,7 @@ if 'ai_client' not in st.session_state:
     # Get an OpenAI/LocalAI/Ollama Client
     ai_client = AIClient(api_key=env.api_key, 
                          base_url=env.base_url,
-                         model=llm_selector(disabled=True))
+                         model=st.session_state.llm_model)
 else:
     ai_client = st.session_state.ai_client
 
